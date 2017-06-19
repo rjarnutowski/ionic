@@ -177,8 +177,9 @@ angular.module('conFusion.controllers', [])
         $scope.promotion = menuFactory.getPromotion().get({id: 0});
     }])
 
-    .controller('AboutController', ['$scope', 'corporateFactory', function ($scope, corporateFactory) {
+    .controller('AboutController', ['$scope', 'corporateFactory','baseUrl', function ($scope, corporateFactory,baseUrl) {
 
+        $scope.baseURL = baseUrl;
         $scope.leaders = corporateFactory.query();
         console.log($scope.leaders);
 
