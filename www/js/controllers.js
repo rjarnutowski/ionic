@@ -155,11 +155,20 @@ angular.module('conFusion.controllers', [])
         };
     }])
 
-    .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', function ($scope, $stateParams, menuFactory, baseURL) {
+    .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'baseURL', '$ionicPopover', '$ionicModal','favoriteFactory', '$ionicListDelegate',function ($scope, $stateParams, menuFactory, baseURL, $ionicPopover, $ionicModal, favoriteFactory,$ionicListDelegate) {
         $scope.baseURL = baseURL;
         $scope.dish = {};
         $scope.showDish = false;
         $scope.message = "Loading ...";
+
+
+        $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {scope: $scope}).then(function (popover) {
+            $scope.dishDetailPopover = popover;
+        });
+
+        $ionicModal.fromTemplateUrl('templates/dish-comment.html', {scope: $scope}).then(function (popover) {
+            $scope.commentModal = popover;
+        });
 
         $scope.dish = menuFactory.getDishes().get({id: parseInt($stateParams.id, 10)})
             .$promise.then(
@@ -171,8 +180,31 @@ angular.module('conFusion.controllers', [])
                     $scope.message = "Error: " + response.status + " " + response.statusText;
                 }
             );
+        $scope.addFavorite = function (index) {
+            favoriteFactory.addToFavorites(index);
+            $scope.dishDetailPopover.hide();
+            $ionicListDelegate.closeOptionButtons();
+        };
 
+        $scope.openCommentModal = function() {
+            $scope.commentModal.show();
+            $scope.dishDetailPopover.hide();
+        };
 
+        $scope.closeCommentModal = function(){
+            $scope.commentModal.hide();
+            $ionicListDelegate.closeOptionButtons();
+        };
+
+        $scope.newComment = {rating:5, comment:"", author:"", date:""};
+        $scope.submitComment = function () {
+            $scope.newComment.date = new Date().toISOString();
+            console.log($scope.newComment);
+            $scope.dish.comments.push($scope.newComment);
+            $scope.commentModal.hide();
+            $ionicListDelegate.closeOptionButtons();
+            $scope.dishDetailPopover.hide();
+        };
     }])
 
     .controller('DishCommentController', ['$scope', 'menuFactory', function ($scope, menuFactory) {
