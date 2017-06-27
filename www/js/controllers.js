@@ -271,7 +271,7 @@ angular.module('conFusion.controllers', [])
             $scope.shouldShowDelete = false;
 
         }
-
+    }])
 
     .filter('favoriteFilter', function () {
         return function (dishes, favorites) {
@@ -287,5 +287,3 @@ angular.module('conFusion.controllers', [])
         }
     });
 
-
-;
